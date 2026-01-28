@@ -5,13 +5,11 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
-// LOGOUT
 const logout = async () => {
   await supabase.auth.signOut()
   router.push('/')
 }
 
-// FORM FIELDS
 const sport = ref('')
 const grad = ref('')
 const adresa = ref('')
@@ -24,12 +22,10 @@ const successMsg = ref('')
 
 const objave = ref([])
 
-// EDIT STATE
 const editingId = ref(null)
 const editedOpis = ref('')
 const currentUserId = ref(null)
 
-// FETCH OBJAVE + DOLAZCI
 const fetchObjave = async () => {
   const { data, error } = await supabase
     .from('objave')
@@ -53,7 +49,6 @@ const fetchObjave = async () => {
   }
 }
 
-// ADD OBJAVA (VALIDACIJA)
 const addObjava = async () => {
   validationError.value = ''
   errorMsg.value = ''
@@ -99,7 +94,6 @@ const addObjava = async () => {
   }
 }
 
-// JOIN LOGIC
 const canJoin = (objava) => {
   if (objava.user_id === currentUserId.value) return false
   return !objava.dolazci.some(d => d.user_id === currentUserId.value)
@@ -107,13 +101,12 @@ const canJoin = (objava) => {
 
 const joinObjava = async (objava) => {
   try {
-    // 1️⃣ upis u dolazci
+
     await supabase.from('dolazci').insert({
       objava_id: objava.id,
       user_id: currentUserId.value
     })
 
-    // 2️⃣ dohvat trenutne vrijednosti iz baze
     const { data, error } = await supabase
       .from('objave')
       .select('broj_dolazaka')
@@ -122,7 +115,6 @@ const joinObjava = async (objava) => {
 
     if (error) throw error
 
-    // 3️⃣ update s točnom vrijednošću
     await supabase
       .from('objave')
       .update({
@@ -137,7 +129,6 @@ const joinObjava = async (objava) => {
 }
 
 
-// EDIT LOGIC
 const startEdit = (objava) => {
   editingId.value = objava.id
   editedOpis.value = objava.opis
@@ -158,7 +149,6 @@ const saveEdit = async (id) => {
   fetchObjave()
 }
 
-// DELETE
 const deleteObjava = async (id) => {
   if (!confirm('Jesi siguran/na da želiš obrisati objavu?')) return
 

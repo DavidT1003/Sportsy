@@ -20,14 +20,13 @@ const toggleMode = () => {
   successMsg.value = ''
 }
 
-// REGISTRACIJA
 
 const register = async () => {
   errorMsg.value = ''
   successMsg.value = ''
 
   try {
-    // 1️⃣ Registracija
+
     const { error: signUpError } = await supabase.auth.signUp({
       email: email.value,
       password: password.value
@@ -35,7 +34,6 @@ const register = async () => {
 
     if (signUpError) throw signUpError
 
-    // 2️⃣ ODMAH login (OVO STVARA SESSION)
     const { data: loginData, error: loginError } =
       await supabase.auth.signInWithPassword({
         email: email.value,
@@ -46,7 +44,6 @@ const register = async () => {
 
     const user = loginData.user
 
-    // 3️⃣ Sad session postoji → INSERT PROLAZI
     const { error: dbError } = await supabase
       .from('korisnici')
       .insert({
@@ -65,7 +62,6 @@ const register = async () => {
 }
 
 
-// PRIJAVA
 const login = async () => {
   errorMsg.value = ''
   successMsg.value = ''
